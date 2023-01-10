@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:woodyversoar/app/routes/termsofuse_route.dart';
-import 'package:woodyversoar/app/views/arreader/arreader_view.dart';
+import 'package:woodyversoar/app/views/qrreader/qrreader_view.dart';
 import 'package:woodyversoar/app/widgets/appbar_widget.dart';
 
 class HomeView extends StatefulWidget {
@@ -35,22 +35,20 @@ class _HomeViewState extends State<HomeView> {
                 width: double.infinity,
                 child: Image.asset("assets/images/ExampleOfUse.png"),
               ),
-              Padding(
-                padding: const EdgeInsets.all(25),
-                child: IconButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const ARReaderView(),
-                      ),
-                    );
-                  },
-                  icon: const Icon(
-                    Icons.keyboard_arrow_right_sharp,
-                    size: 75,
-                    color: Colors.white,
-                  ),
+              IconButton(
+                iconSize: 75,
+                padding: const EdgeInsets.all(0),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const QRReaderView(),
+                    ),
+                  );
+                },
+                icon: const Icon(
+                  Icons.keyboard_arrow_right_sharp,
+                  color: Colors.white,
                 ),
               ),
             ],
