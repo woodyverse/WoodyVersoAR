@@ -79,7 +79,7 @@ class _ARReaderViewState extends State<ARReaderView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarWidget(),
+      appBar: AppBarWidget(context, false, false),
       body: Center(
         child: Stack(
           alignment: AlignmentDirectional.bottomCenter,
@@ -104,7 +104,7 @@ class _ARReaderViewState extends State<ARReaderView> {
                           style: ElevatedButton.styleFrom(
                             shape: const CircleBorder(),
                             backgroundColor: Colors.white,
-                            shadowColor: const Color.fromARGB(51, 0, 0, 0),
+                            shadowColor: const Color.fromARGB(25, 0, 0, 0),
                           ),
                           child: const Center(
                             child: Text(

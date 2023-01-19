@@ -25,7 +25,7 @@ class _HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 229, 229, 229),
-      appBar: AppBarWidget(),
+      appBar: AppBarWidget(context, true, false),
       body: Column(
         children: [
           Stack(
@@ -39,7 +39,7 @@ class _HomeViewState extends State<HomeView> {
                 iconSize: 75,
                 padding: const EdgeInsets.all(0),
                 onPressed: () {
-                  Navigator.push(
+                  Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
                       builder: (context) => const QRReaderView(),
@@ -58,7 +58,7 @@ class _HomeViewState extends State<HomeView> {
               color: Colors.white,
               boxShadow: [
                 BoxShadow(
-                  color: Color.fromARGB(51, 0, 0, 0),
+                  color: Color.fromARGB(25, 0, 0, 0),
                   spreadRadius: 5,
                   blurRadius: 5,
                 ),

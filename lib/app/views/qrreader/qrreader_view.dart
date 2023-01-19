@@ -32,7 +32,6 @@ class _QRReaderViewState extends State<QRReaderView> {
   }
 
   void _onPermissionSet(BuildContext context, QRViewController ctrl, bool p) {
-    print('${DateTime.now().toIso8601String()}_onPermissionSet $p');
     if (!p) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('no Permission')),
@@ -60,7 +59,7 @@ class _QRReaderViewState extends State<QRReaderView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarWidget(),
+      appBar: AppBarWidget(context, false, false),
       body: Center(
         child: Stack(
           alignment: AlignmentDirectional.bottomCenter,
@@ -88,21 +87,28 @@ class _QRReaderViewState extends State<QRReaderView> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  TextButton(
-                    onPressed: () {
-                      if (res?.code != null) {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return ARReaderView(
-                                aRCodeURL: res!.code!,
-                              );
-                            },
+                  Visibility(
+                    visible: res == null,
+                    child: const Card(
+                      color: Colors.white,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 10,
+                        ),
+                        child: Text(
+                          "Aponte seu celular para um código QR",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
                           ),
-                        );
-                      }
-                    },
+                        ),
+                      ),
+                    ),
+                  ),
+                  Visibility(
+                    visible: res != null,
                     child: Card(
                       color: Colors.white,
                       child: Padding(
@@ -110,18 +116,73 @@ class _QRReaderViewState extends State<QRReaderView> {
                           horizontal: 20,
                           vertical: 10,
                         ),
-                        child: Text(
-                          res != null
-                              ? "${res!.code}"
-                              : "Aponte seu celular para um código QR",
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        child: Column(
+                          children: [
+                            Text(
+                              "${res?.code}",
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      res = null;
+                                    });
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    shape: const CircleBorder(),
+                                    backgroundColor: Colors.red,
+                                    shadowColor:
+                                        const Color.fromARGB(25, 0, 0, 0),
+                                  ),
+                                  child: const Center(
+                                    child: Icon(
+                                      Icons.close,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) {
+                                          return ARReaderView(
+                                            aRCodeURL: res!.code!,
+                                          );
+                                        },
+                                      ),
+                                    );
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    shape: const CircleBorder(),
+                                    backgroundColor: Colors.green,
+                                    shadowColor:
+                                        const Color.fromARGB(25, 0, 0, 0),
+                                  ),
+                                  child: const Center(
+                                    child: Icon(
+                                      Icons.check,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
+                          ],
                         ),
                       ),
                     ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.all(4),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -141,7 +202,7 @@ class _QRReaderViewState extends State<QRReaderView> {
                           style: ElevatedButton.styleFrom(
                             shape: const CircleBorder(),
                             backgroundColor: Colors.white,
-                            shadowColor: const Color.fromARGB(51, 0, 0, 0),
+                            shadowColor: const Color.fromARGB(25, 0, 0, 0),
                           ),
                           child: Center(
                             child: FutureBuilder(
