@@ -123,10 +123,13 @@ class _ProfileViewState extends State<ProfileView> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
+                              Text(
                                 "Email",
                                 textAlign: TextAlign.left,
-                                style: TextStyle(),
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.grey.shade700,
+                                ),
                               ),
                               const Padding(
                                 padding: EdgeInsets.all(4),
@@ -180,10 +183,13 @@ class _ProfileViewState extends State<ProfileView> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
+                              Text(
                                 "Senha",
                                 textAlign: TextAlign.left,
-                                style: TextStyle(),
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.grey.shade700,
+                                ),
                               ),
                               const Padding(
                                 padding: EdgeInsets.all(4),
