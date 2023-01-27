@@ -13,15 +13,6 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   ///
   @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      if (mounted) TermsOfUseRoute().welcomeDialog(context);
-    });
-  }
-
-  ///
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 229, 229, 229),

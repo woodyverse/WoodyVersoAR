@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart' as dio;
+import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
 import 'package:woodyversoar/app/api/global/baseurl_global.dart';
+import 'package:woodyversoar/app/api/services/responseapi_sevice.dart';
 
 class API {
   //? Defines header
@@ -13,11 +15,7 @@ class API {
     if (withToken) {
       String? token = await _getToken();
       return {
-        HttpHeaders.contentTypeHeader:
-            "multipart/form-data; boundary=<calculated when request is sent>",
-        HttpHeaders.contentLengthHeader: "<calculated when request is sent>",
-        HttpHeaders.hostHeader: "<calculated when request is sent>",
-        HttpHeaders.userAgentHeader: "PostmanRuntime/7.30.0",
+        HttpHeaders.contentTypeHeader: "multipart/form-data",
         HttpHeaders.acceptHeader: "*/*",
         HttpHeaders.acceptEncodingHeader: "gzip, deflate, br",
         HttpHeaders.connectionHeader: "keep-alive",
@@ -25,11 +23,7 @@ class API {
       };
     } else {
       return {
-        HttpHeaders.contentTypeHeader:
-            "multipart/form-data; boundary=<calculated when request is sent>",
-        HttpHeaders.contentLengthHeader: "<calculated when request is sent>",
-        HttpHeaders.hostHeader: "<calculated when request is sent>",
-        HttpHeaders.userAgentHeader: "PostmanRuntime/7.30.0",
+        HttpHeaders.contentTypeHeader: "multipart/form-data",
         HttpHeaders.acceptHeader: "*/*",
         HttpHeaders.acceptEncodingHeader: "gzip, deflate, br",
         HttpHeaders.connectionHeader: "keep-alive",
@@ -43,82 +37,112 @@ class API {
     String? token = _prefs.getString("API:token");
   }
 
+  // ? Process response
+  ResponseAPIService _responseAPIService(dio.Response res) {
+    final Map<String, dynamic> responseJSON = jsonDecode(res.data);
+    return ResponseAPIService(response: responseJSON);
+  }
+
   //? Get API
-  Future<dynamic> get(String URL, bool withToken) async {
+  Future<ResponseAPIService> get(String URL, bool withToken) async {
     try {
       Map<String, String>? headers;
+      final dioRequest = dio.Dio();
 
       await _defaultHeader(withToken).then((value) => headers = value);
 
-      return await http
-          .get(
-            Uri.parse("${BaseURLGlobal().URL}/$URL"),
-            headers: headers,
-          )
-          .timeout(const Duration(minutes: 5));
+      dioRequest.options.baseUrl = BaseURLGlobal().URL;
+      dioRequest.options.headers = headers;
+
+      var res = await dioRequest.get(
+        "/$URL",
+      );
+
+      return _responseAPIService(res);
     } catch (error) {
       print(error);
-      return null;
+      return ResponseAPIService(response: null);
     }
   }
 
   //? Post API
-  Future<dynamic> post(String URL, bool withToken, Object? body) async {
+  Future<ResponseAPIService> post(
+      String URL, bool withToken, Map<String, dynamic>? body) async {
     try {
       Map<String, String>? headers;
+      final dioRequest = dio.Dio();
 
       await _defaultHeader(withToken).then((value) => headers = value);
 
-      return await http
-          .post(
-            Uri.parse("${BaseURLGlobal().URL}/$URL"),
-            headers: headers,
-            body: json.encode(body),
-          )
-          .timeout(const Duration(minutes: 5));
+      dioRequest.options.baseUrl = BaseURLGlobal().URL;
+      dioRequest.options.headers = headers;
+
+      dio.FormData? formData;
+      if (body != null) formData = dio.FormData.fromMap(body);
+
+      var res = await dioRequest.post(
+        "/$URL",
+        data: formData,
+      );
+
+      return _responseAPIService(res);
     } catch (error) {
       print(error);
-      return null;
+      return ResponseAPIService(response: null);
     }
   }
 
   //? Put API
-  Future<dynamic> put(String URL, bool withToken, Object? body) async {
+  Future<ResponseAPIService> put(
+      String URL, bool withToken, Map<String, dynamic>? body) async {
     try {
       Map<String, String>? headers;
+      final dioRequest = dio.Dio();
 
       await _defaultHeader(withToken).then((value) => headers = value);
 
-      return await http
-          .put(
-            Uri.parse("${BaseURLGlobal().URL}/$URL"),
-            headers: headers,
-            body: json.encode(body),
-          )
-          .timeout(const Duration(minutes: 5));
+      dioRequest.options.baseUrl = BaseURLGlobal().URL;
+      dioRequest.options.headers = headers;
+
+      dio.FormData? formData;
+      if (body != null) formData = dio.FormData.fromMap(body);
+
+      var res = await dioRequest.put(
+        "/$URL",
+        data: formData,
+      );
+
+      return _responseAPIService(res);
     } catch (error) {
       print(error);
-      return null;
+      return ResponseAPIService(response: null);
     }
   }
 
   //? Delete API
-  Future<dynamic> delete(String URL, bool withToken, Object? body) async {
+  Future<ResponseAPIService> delete(
+      String URL, bool withToken, Map<String, dynamic>? body) async {
     try {
       Map<String, String>? headers;
+      final dioRequest = dio.Dio();
 
       await _defaultHeader(withToken).then((value) => headers = value);
 
-      return await http
-          .delete(
-            Uri.parse("${BaseURLGlobal().URL}/$URL"),
-            headers: headers,
-            body: json.encode(body),
-          )
-          .timeout(const Duration(minutes: 5));
+      dioRequest.options.baseUrl = BaseURLGlobal().URL;
+      dioRequest.options.headers = headers;
+
+      dio.FormData? formData;
+      if (body != null) formData = dio.FormData.fromMap(body);
+
+      var res = await dioRequest.delete(
+        "/$URL",
+        data: formData,
+      );
+
+      return _responseAPIService(res);
     } catch (error) {
       print(error);
-      return null;
+      return ResponseAPIService(response: null);
     }
   }
 }

@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:woodyversoar/app/controllers/login_controller.dart';
+import 'package:woodyversoar/app/models/login_model.dart';
 import 'package:woodyversoar/app/routes/initalert_route.dart';
+import 'package:woodyversoar/app/routes/termsofuse_route.dart';
+import 'package:woodyversoar/app/views/home/home_view.dart';
 
-class LoginOptionsView extends StatefulWidget {
-  const LoginOptionsView({Key? key}) : super(key: key);
+class LoginView extends StatefulWidget {
+  const LoginView({Key? key}) : super(key: key);
 
   @override
-  State<LoginOptionsView> createState() => _LoginOptionsViewState();
+  State<LoginView> createState() => _LoginViewState();
 }
 
-class _LoginOptionsViewState extends State<LoginOptionsView> {
+class _LoginViewState extends State<LoginView> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _name = TextEditingController();
   final TextEditingController _email = TextEditingController();
@@ -17,6 +21,76 @@ class _LoginOptionsViewState extends State<LoginOptionsView> {
 
   bool enableLogin = false;
   bool enableRegister = false;
+
+  bool awaitRequest = false;
+
+  ///
+  _postToken() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        awaitRequest = true;
+      });
+      String email = _email.text;
+      String password = _password.text;
+
+      await LoginController()
+          .postToken(PostTokenModel(
+        email,
+        password,
+      ))
+          .then((value) {
+        if (value.response["sucess"] == true) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) {
+                return const HomeView();
+              },
+            ),
+          );
+        } else {
+          String errorMensage = value.response["msg"];
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: Colors.white,
+              content: Text(
+                "$errorMensage - Verifique as credenciais digitadas!",
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+          );
+        }
+      }).onError((error, stackTrace) {
+        String errorMensage = "Erro ao fazer login! Contate um adminstrador.";
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.white,
+            content: Text(
+              errorMensage,
+              style: const TextStyle(
+                color: Colors.black,
+                fontSize: 16,
+              ),
+            ),
+          ),
+        );
+      });
+    }
+  }
+
+  ///
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      if (mounted) TermsOfUseRoute().welcomeDialog(context);
+    });
+  }
 
   ///
   Widget loginWidget() {
@@ -97,34 +171,38 @@ class _LoginOptionsViewState extends State<LoginOptionsView> {
                       const Padding(
                         padding: EdgeInsets.all(4),
                       ),
-                      SizedBox(
-                        height: 35,
-                        child: TextFormField(
-                          controller: _email,
-                          textAlign: TextAlign.start,
-                          keyboardType: TextInputType.emailAddress,
-                          textAlignVertical: TextAlignVertical.center,
-                          style: const TextStyle(
-                            color: Colors.grey,
+                      TextFormField(
+                        controller: _email,
+                        textAlign: TextAlign.start,
+                        keyboardType: TextInputType.emailAddress,
+                        textAlignVertical: TextAlignVertical.center,
+                        style: const TextStyle(
+                          color: Colors.grey,
+                        ),
+                        decoration: InputDecoration(
+                          contentPadding: const EdgeInsets.all(5),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              width: 0.5,
+                              color: Colors.grey,
+                            ),
+                            borderRadius: BorderRadius.circular(5),
                           ),
-                          decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.all(5),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                width: 0.5,
-                                color: Colors.grey,
-                              ),
-                              borderRadius: BorderRadius.circular(5),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              width: 1,
+                              color: Colors.grey,
                             ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                width: 1,
-                                color: Colors.grey,
-                              ),
-                              borderRadius: BorderRadius.circular(5),
-                            ),
+                            borderRadius: BorderRadius.circular(5),
                           ),
                         ),
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Digite o email";
+                          }
+                          return null;
+                        },
                       ),
                     ],
                   ),
@@ -144,36 +222,40 @@ class _LoginOptionsViewState extends State<LoginOptionsView> {
                       const Padding(
                         padding: EdgeInsets.all(4),
                       ),
-                      SizedBox(
-                        height: 35,
-                        child: TextFormField(
-                          controller: _password,
-                          textAlign: TextAlign.start,
-                          obscureText: true,
-                          obscuringCharacter: "*",
-                          keyboardType: TextInputType.visiblePassword,
-                          textAlignVertical: TextAlignVertical.center,
-                          style: const TextStyle(
-                            color: Colors.grey,
+                      TextFormField(
+                        controller: _password,
+                        textAlign: TextAlign.start,
+                        obscureText: true,
+                        obscuringCharacter: "*",
+                        keyboardType: TextInputType.visiblePassword,
+                        textAlignVertical: TextAlignVertical.center,
+                        style: const TextStyle(
+                          color: Colors.grey,
+                        ),
+                        decoration: InputDecoration(
+                          contentPadding: const EdgeInsets.all(5),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              width: 0.5,
+                              color: Colors.grey,
+                            ),
+                            borderRadius: BorderRadius.circular(5),
                           ),
-                          decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.all(5),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                width: 0.5,
-                                color: Colors.grey,
-                              ),
-                              borderRadius: BorderRadius.circular(5),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              width: 1,
+                              color: Colors.grey,
                             ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                width: 1,
-                                color: Colors.grey,
-                              ),
-                              borderRadius: BorderRadius.circular(5),
-                            ),
+                            borderRadius: BorderRadius.circular(5),
                           ),
                         ),
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Digite a senha";
+                          }
+                          return null;
+                        },
                       ),
                     ],
                   ),
@@ -190,7 +272,7 @@ class _LoginOptionsViewState extends State<LoginOptionsView> {
                   width: 175,
                   child: ElevatedButton(
                     onPressed: () {
-                      InitAlert().formatNotAcceptedError(context);
+                      _postToken();
                     },
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white,
@@ -294,34 +376,38 @@ class _LoginOptionsViewState extends State<LoginOptionsView> {
                       const Padding(
                         padding: EdgeInsets.all(4),
                       ),
-                      SizedBox(
-                        height: 35,
-                        child: TextFormField(
-                          controller: _name,
-                          textAlign: TextAlign.start,
-                          keyboardType: TextInputType.name,
-                          textAlignVertical: TextAlignVertical.center,
-                          style: const TextStyle(
-                            color: Colors.grey,
+                      TextFormField(
+                        controller: _name,
+                        textAlign: TextAlign.start,
+                        keyboardType: TextInputType.name,
+                        textAlignVertical: TextAlignVertical.center,
+                        style: const TextStyle(
+                          color: Colors.grey,
+                        ),
+                        decoration: InputDecoration(
+                          contentPadding: const EdgeInsets.all(5),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              width: 0.5,
+                              color: Colors.grey,
+                            ),
+                            borderRadius: BorderRadius.circular(5),
                           ),
-                          decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.all(5),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                width: 0.5,
-                                color: Colors.grey,
-                              ),
-                              borderRadius: BorderRadius.circular(5),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              width: 1,
+                              color: Colors.grey,
                             ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                width: 1,
-                                color: Colors.grey,
-                              ),
-                              borderRadius: BorderRadius.circular(5),
-                            ),
+                            borderRadius: BorderRadius.circular(5),
                           ),
                         ),
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Digite o nome";
+                          }
+                          return null;
+                        },
                       ),
                     ],
                   ),
@@ -341,34 +427,38 @@ class _LoginOptionsViewState extends State<LoginOptionsView> {
                       const Padding(
                         padding: EdgeInsets.all(4),
                       ),
-                      SizedBox(
-                        height: 35,
-                        child: TextFormField(
-                          controller: _email,
-                          textAlign: TextAlign.start,
-                          keyboardType: TextInputType.emailAddress,
-                          textAlignVertical: TextAlignVertical.center,
-                          style: const TextStyle(
-                            color: Colors.grey,
+                      TextFormField(
+                        controller: _email,
+                        textAlign: TextAlign.start,
+                        keyboardType: TextInputType.emailAddress,
+                        textAlignVertical: TextAlignVertical.center,
+                        style: const TextStyle(
+                          color: Colors.grey,
+                        ),
+                        decoration: InputDecoration(
+                          contentPadding: const EdgeInsets.all(5),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              width: 0.5,
+                              color: Colors.grey,
+                            ),
+                            borderRadius: BorderRadius.circular(5),
                           ),
-                          decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.all(5),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                width: 0.5,
-                                color: Colors.grey,
-                              ),
-                              borderRadius: BorderRadius.circular(5),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              width: 1,
+                              color: Colors.grey,
                             ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                width: 1,
-                                color: Colors.grey,
-                              ),
-                              borderRadius: BorderRadius.circular(5),
-                            ),
+                            borderRadius: BorderRadius.circular(5),
                           ),
                         ),
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Digite o email";
+                          }
+                          return null;
+                        },
                       ),
                     ],
                   ),
@@ -388,36 +478,40 @@ class _LoginOptionsViewState extends State<LoginOptionsView> {
                       const Padding(
                         padding: EdgeInsets.all(4),
                       ),
-                      SizedBox(
-                        height: 35,
-                        child: TextFormField(
-                          controller: _password,
-                          textAlign: TextAlign.start,
-                          obscureText: true,
-                          obscuringCharacter: "*",
-                          keyboardType: TextInputType.visiblePassword,
-                          textAlignVertical: TextAlignVertical.center,
-                          style: const TextStyle(
-                            color: Colors.grey,
+                      TextFormField(
+                        controller: _password,
+                        textAlign: TextAlign.start,
+                        obscureText: true,
+                        obscuringCharacter: "*",
+                        keyboardType: TextInputType.visiblePassword,
+                        textAlignVertical: TextAlignVertical.center,
+                        style: const TextStyle(
+                          color: Colors.grey,
+                        ),
+                        decoration: InputDecoration(
+                          contentPadding: const EdgeInsets.all(5),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              width: 0.5,
+                              color: Colors.grey,
+                            ),
+                            borderRadius: BorderRadius.circular(5),
                           ),
-                          decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.all(5),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                width: 0.5,
-                                color: Colors.grey,
-                              ),
-                              borderRadius: BorderRadius.circular(5),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              width: 1,
+                              color: Colors.grey,
                             ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                width: 1,
-                                color: Colors.grey,
-                              ),
-                              borderRadius: BorderRadius.circular(5),
-                            ),
+                            borderRadius: BorderRadius.circular(5),
                           ),
                         ),
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Digite a senha";
+                          }
+                          return null;
+                        },
                       ),
                     ],
                   ),
