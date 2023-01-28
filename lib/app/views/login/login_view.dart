@@ -18,6 +18,7 @@ class _LoginViewState extends State<LoginView> {
   final TextEditingController _name = TextEditingController();
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
+  final TextEditingController _passwordCheck = TextEditingController();
 
   bool enableLogin = false;
   bool enableRegister = false;
@@ -25,7 +26,7 @@ class _LoginViewState extends State<LoginView> {
   bool awaitRequest = false;
 
   ///
-  _postToken() async {
+  _postLogin() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
         awaitRequest = true;
@@ -34,7 +35,7 @@ class _LoginViewState extends State<LoginView> {
       String password = _password.text;
 
       await LoginController()
-          .postToken(PostTokenModel(
+          .postLogin(PostLoginModel(
         email,
         password,
       ))
@@ -55,7 +56,7 @@ class _LoginViewState extends State<LoginView> {
             SnackBar(
               backgroundColor: Colors.white,
               content: Text(
-                "$errorMensage - Verifique as credenciais digitadas!",
+                "$errorMensage",
                 style: const TextStyle(
                   color: Colors.black,
                   fontSize: 16,
@@ -64,8 +65,74 @@ class _LoginViewState extends State<LoginView> {
             ),
           );
         }
+        setState(() {
+          awaitRequest = false;
+        });
       }).onError((error, stackTrace) {
         String errorMensage = "Erro ao fazer login! Contate um adminstrador.";
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.white,
+            content: Text(
+              errorMensage,
+              style: const TextStyle(
+                color: Colors.black,
+                fontSize: 16,
+              ),
+            ),
+          ),
+        );
+      });
+    }
+  }
+
+  _postCreateUser() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        awaitRequest = true;
+      });
+      String login = _email.text;
+      String email = _email.text;
+      String nome = _name.text;
+      String password = _password.text;
+      String password_check = _passwordCheck.text;
+
+      await LoginController()
+          .postCreateUser(
+              PostCreateUserModel(login, email, nome, password, password_check))
+          .then((value) {
+        if (value.response["sucess"] == true) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) {
+                return const HomeView();
+              },
+            ),
+          );
+        } else {
+          String errorMensage = value.response["msg"];
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: Colors.white,
+              content: Text(
+                errorMensage,
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+          );
+        }
+        setState(() {
+          awaitRequest = false;
+        });
+      }).onError((error, stackTrace) {
+        String errorMensage =
+            "Erro ao criar cadastro! Contate um adminstrador.";
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -272,7 +339,7 @@ class _LoginViewState extends State<LoginView> {
                   width: 175,
                   child: ElevatedButton(
                     onPressed: () {
-                      _postToken();
+                      awaitRequest ? null : _postLogin();
                     },
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white,
@@ -283,14 +350,20 @@ class _LoginViewState extends State<LoginView> {
                         ),
                       ),
                     ),
-                    child: const Text(
-                      "Confirmar",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w300,
-                        color: Colors.white,
-                      ),
-                    ),
+                    child: awaitRequest
+                        ? const Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                            ),
+                          )
+                        : const Text(
+                            "Confirmar",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w300,
+                              color: Colors.white,
+                            ),
+                          ),
                   ),
                 ),
               ],
@@ -515,6 +588,59 @@ class _LoginViewState extends State<LoginView> {
                       ),
                     ],
                   ),
+                  const Padding(
+                    padding: EdgeInsets.all(10),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Confirme a senha",
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.all(4),
+                      ),
+                      TextFormField(
+                        controller: _passwordCheck,
+                        textAlign: TextAlign.start,
+                        obscureText: true,
+                        obscuringCharacter: "*",
+                        keyboardType: TextInputType.visiblePassword,
+                        textAlignVertical: TextAlignVertical.center,
+                        style: const TextStyle(
+                          color: Colors.grey,
+                        ),
+                        decoration: InputDecoration(
+                          contentPadding: const EdgeInsets.all(5),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              width: 0.5,
+                              color: Colors.grey,
+                            ),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              width: 1,
+                              color: Colors.grey,
+                            ),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                        ),
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Digite a senha";
+                          }
+                          return null;
+                        },
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -527,7 +653,9 @@ class _LoginViewState extends State<LoginView> {
                 SizedBox(
                   width: 175,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      awaitRequest ? null : _postCreateUser();
+                    },
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white,
                       backgroundColor: Colors.black,
@@ -537,14 +665,20 @@ class _LoginViewState extends State<LoginView> {
                         ),
                       ),
                     ),
-                    child: const Text(
-                      "Confirmar",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w300,
-                        color: Colors.white,
-                      ),
-                    ),
+                    child: awaitRequest
+                        ? const Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                            ),
+                          )
+                        : const Text(
+                            "Confirmar",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w300,
+                              color: Colors.white,
+                            ),
+                          ),
                   ),
                 ),
               ],

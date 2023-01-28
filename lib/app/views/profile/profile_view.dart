@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:woodyversoar/app/controllers/login_controller.dart';
 import 'package:woodyversoar/app/widgets/packagemanager_widget.dart';
 
 import '../../widgets/appbar_widget.dart';
@@ -39,6 +40,12 @@ class _ProfileViewState extends State<ProfileView> {
                 key: _formKey,
                 child: Column(
                   children: [
+                    TextButton(
+                      onPressed: () {
+                        LoginController().deleteLogin(context);
+                      },
+                      child: const Text("LOGOUT"),
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
