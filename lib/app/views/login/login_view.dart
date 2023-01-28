@@ -351,9 +351,13 @@ class _LoginViewState extends State<LoginView> {
                       ),
                     ),
                     child: awaitRequest
-                        ? const Center(
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                              ),
                             ),
                           )
                         : const Text(
@@ -667,8 +671,12 @@ class _LoginViewState extends State<LoginView> {
                     ),
                     child: awaitRequest
                         ? const Center(
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
+                            child: SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                              ),
                             ),
                           )
                         : const Text(

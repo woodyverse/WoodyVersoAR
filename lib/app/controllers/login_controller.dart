@@ -9,6 +9,13 @@ import 'package:woodyversoar/app/views/login/login_view.dart';
 
 class LoginController {
   // ? Save login
+  saveLogin(ResponseAPIService res) async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    _prefs.setInt("API:status", res.response["status"]);
+    _prefs.setString("API:id", res.response["id"]);
+    _prefs.setString("API:login", res.response["login"]);
+  }
+
   saveToken(ResponseAPIService res) async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
     _prefs.setString("API:token", res.response["token"]);
@@ -38,6 +45,7 @@ class LoginController {
     });
 
     if (res != null && res.response["sucess"] == true) {
+      saveLogin(res);
       await postToken(
           PostTokenModel(postLoginModel.login, postLoginModel.password));
     }
