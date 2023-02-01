@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:woodyversoar/app/controllers/login_controller.dart';
 import 'package:woodyversoar/app/controllers/profile_controller.dart';
@@ -121,10 +122,10 @@ class _ProfileViewState extends State<ProfileView> {
                                     padding: EdgeInsets.zero,
                                     foregroundColor: Colors.grey,
                                   ),
-                                  child: const Icon(
-                                    Icons.mode_edit_outline_outlined,
+                                  child: const FaIcon(
+                                    FontAwesomeIcons.pencil,
                                     color: Colors.black,
-                                    size: 20,
+                                    size: 15,
                                   ),
                                 ),
                               ),
@@ -149,11 +150,11 @@ class _ProfileViewState extends State<ProfileView> {
                                         child: CircleAvatar(
                                           backgroundColor: Color.fromARGB(
                                               255, 232, 232, 232),
-                                          child: Icon(
-                                            Icons.person,
+                                          child: FaIcon(
+                                            FontAwesomeIcons.userAstronaut,
                                             color: Color.fromARGB(
                                                 255, 174, 174, 174),
-                                            size: 100,
+                                            size: 50,
                                           ),
                                         ),
                                       ),
@@ -170,10 +171,10 @@ class _ProfileViewState extends State<ProfileView> {
                                                 25, 0, 0, 0),
                                           ),
                                           child: const Center(
-                                            child: Icon(
-                                              Icons.mode_edit_outline_outlined,
-                                              color: Colors.grey,
-                                              size: 20,
+                                            child: FaIcon(
+                                              FontAwesomeIcons.pencil,
+                                              color: Colors.black,
+                                              size: 15,
                                             ),
                                           ),
                                         ),
@@ -235,10 +236,10 @@ class _ProfileViewState extends State<ProfileView> {
                                               padding: EdgeInsets.zero,
                                               foregroundColor: Colors.grey,
                                             ),
-                                            child: const Icon(
-                                              Icons.mode_edit_outline_outlined,
-                                              color: Colors.grey,
-                                              size: 20,
+                                            child: const FaIcon(
+                                              FontAwesomeIcons.pencil,
+                                              color: Colors.black,
+                                              size: 15,
                                             ),
                                           ),
                                         ),
@@ -310,10 +311,10 @@ class _ProfileViewState extends State<ProfileView> {
                                               padding: EdgeInsets.zero,
                                               foregroundColor: Colors.grey,
                                             ),
-                                            child: const Icon(
-                                              Icons.mode_edit_outline_outlined,
-                                              color: Colors.grey,
-                                              size: 20,
+                                            child: const FaIcon(
+                                              FontAwesomeIcons.pencil,
+                                              color: Colors.black,
+                                              size: 15,
                                             ),
                                           ),
                                         ),

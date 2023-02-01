@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:woodyversoar/app/routes/termsofuse_route.dart';
 import 'package:woodyversoar/app/views/qrreader/qrreader_view.dart';
 import 'package:woodyversoar/app/widgets/appbar_widget.dart';
@@ -37,8 +38,8 @@ class _HomeViewState extends State<HomeView> {
                     ),
                   );
                 },
-                icon: const Icon(
-                  Icons.keyboard_arrow_right_sharp,
+                icon: const FaIcon(
+                  FontAwesomeIcons.chevronRight,
                   color: Colors.white,
                 ),
               ),

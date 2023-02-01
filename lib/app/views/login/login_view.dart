@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:woodyversoar/app/controllers/login_controller.dart';
 import 'package:woodyversoar/app/models/login_model.dart';
-import 'package:woodyversoar/app/routes/initalert_route.dart';
 import 'package:woodyversoar/app/routes/termsofuse_route.dart';
 import 'package:woodyversoar/app/views/home/home_view.dart';
 
@@ -195,8 +195,8 @@ class _LoginViewState extends State<LoginView> {
                       padding: EdgeInsets.zero,
                       foregroundColor: Colors.grey,
                     ),
-                    child: const Icon(
-                      Icons.arrow_back_ios,
+                    child: const FaIcon(
+                      FontAwesomeIcons.chevronLeft,
                       color: Colors.grey,
                       size: 15,
                     ),
@@ -410,8 +410,8 @@ class _LoginViewState extends State<LoginView> {
                       padding: EdgeInsets.zero,
                       foregroundColor: Colors.grey,
                     ),
-                    child: const Icon(
-                      Icons.arrow_back_ios,
+                    child: const FaIcon(
+                      FontAwesomeIcons.chevronLeft,
                       color: Colors.grey,
                       size: 15,
                     ),

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:woodyversoar/app/views/arreader/arreader_view.dart';
 import 'package:woodyversoar/app/widgets/appbar_widget.dart';
@@ -142,8 +143,8 @@ class _QRReaderViewState extends State<QRReaderView> {
                                         const Color.fromARGB(25, 0, 0, 0),
                                   ),
                                   child: const Center(
-                                    child: Icon(
-                                      Icons.close,
+                                    child: FaIcon(
+                                      FontAwesomeIcons.times,
                                       color: Colors.white,
                                     ),
                                   ),
@@ -168,8 +169,8 @@ class _QRReaderViewState extends State<QRReaderView> {
                                         const Color.fromARGB(25, 0, 0, 0),
                                   ),
                                   child: const Center(
-                                    child: Icon(
-                                      Icons.check,
+                                    child: FaIcon(
+                                      FontAwesomeIcons.check,
                                       color: Colors.white,
                                     ),
                                   ),

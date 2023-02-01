@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:woodyversoar/app/views/home/home_view.dart';
 import 'package:woodyversoar/app/views/profile/profile_view.dart';
 
@@ -46,8 +47,8 @@ PreferredSizeWidget AppBarWidget(
                       shadowColor: const Color.fromARGB(25, 0, 0, 0),
                     ),
                     child: const Center(
-                      child: Icon(
-                        Icons.question_mark,
+                      child: FaIcon(
+                        FontAwesomeIcons.question,
                         color: Colors.black,
                         size: 15,
                       ),
@@ -84,8 +85,8 @@ PreferredSizeWidget AppBarWidget(
                       shadowColor: const Color.fromARGB(25, 0, 0, 0),
                     ),
                     child: const Center(
-                      child: Icon(
-                        Icons.person,
+                      child: FaIcon(
+                        FontAwesomeIcons.userLarge,
                         color: Colors.black,
                         size: 15,
                       ),

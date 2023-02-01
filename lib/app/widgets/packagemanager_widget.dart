@@ -1,4 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:woodyversoar/app/controllers/packagemanager_controller.dart';
+import 'package:woodyversoar/app/models/packagemanager_model.dart';
+import 'package:woodyversoar/app/routes/initalert_route.dart';
 
 class PackageManagerWidget extends StatefulWidget {
   const PackageManagerWidget({super.key});
@@ -17,8 +23,11 @@ class CustomScroll extends ScrollBehavior {
 
 class _PackageManagerWidgetState extends State<PackageManagerWidget> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _packageName = TextEditingController();
+  final TextEditingController _packageCode = TextEditingController();
 
+  bool awaitRequest = false;
+
+  ///
   int option = 0;
   List<String> itens = [
     "Pacote 1",
@@ -28,6 +37,44 @@ class _PackageManagerWidgetState extends State<PackageManagerWidget> {
     "Pacote 5",
   ];
 
+  ///
+  deletePackage(
+    BuildContext context,
+    String packageName,
+  ) async {
+    InitAlert().confirmDeletePackage(
+      context,
+      packageName,
+    );
+  }
+
+  ///
+  _postWoodyversoArPacks() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        awaitRequest = true;
+      });
+
+      String packageCode = _packageCode.text;
+
+      await PackageManagerController()
+          .postWoodyversoArPacks(PostWoodyversoArPacksModel(packageCode))
+          .then((value) {
+        if (value!.listPacks!.isNotEmpty) {
+          setState(() {
+            awaitRequest = false;
+          });
+        } else {
+          setState(() {
+            awaitRequest = false;
+          });
+          InitAlert().invalidPackageCode(context);
+        }
+      });
+    }
+  }
+
+  ///
   Widget SelectOption() {
     return Padding(
       padding: const EdgeInsets.symmetric(
@@ -68,8 +115,8 @@ class _PackageManagerWidgetState extends State<PackageManagerWidget> {
                         shadowColor: const Color.fromARGB(127, 0, 0, 0),
                       ),
                       child: const Center(
-                        child: Icon(
-                          Icons.remove_red_eye_outlined,
+                        child: FaIcon(
+                          FontAwesomeIcons.eye,
                           color: Colors.black,
                           size: 35,
                         ),
@@ -107,8 +154,8 @@ class _PackageManagerWidgetState extends State<PackageManagerWidget> {
                         shadowColor: const Color.fromARGB(127, 0, 0, 0),
                       ),
                       child: const Center(
-                        child: Icon(
-                          Icons.add,
+                        child: FaIcon(
+                          FontAwesomeIcons.plus,
                           color: Colors.black,
                           size: 35,
                         ),
@@ -161,8 +208,8 @@ class _PackageManagerWidgetState extends State<PackageManagerWidget> {
                       padding: EdgeInsets.zero,
                       foregroundColor: Colors.grey,
                     ),
-                    child: const Icon(
-                      Icons.arrow_back_ios,
+                    child: const FaIcon(
+                      FontAwesomeIcons.chevronLeft,
                       color: Colors.grey,
                       size: 20,
                     ),
@@ -217,18 +264,16 @@ class _PackageManagerWidgetState extends State<PackageManagerWidget> {
                                   height: 20,
                                   child: TextButton(
                                     onPressed: () {
-                                      setState(() {
-                                        option = 3;
-                                      });
+                                      deletePackage(context, "teste-teste");
                                     },
                                     style: TextButton.styleFrom(
                                       padding: EdgeInsets.zero,
                                       foregroundColor: Colors.grey,
                                     ),
-                                    child: const Icon(
-                                      Icons.mode_edit_outline_outlined,
+                                    child: const FaIcon(
+                                      FontAwesomeIcons.trashCan,
                                       color: Colors.grey,
-                                      size: 20,
+                                      size: 15,
                                     ),
                                   ),
                                 ),
@@ -277,8 +322,8 @@ class _PackageManagerWidgetState extends State<PackageManagerWidget> {
                       padding: EdgeInsets.zero,
                       foregroundColor: Colors.grey,
                     ),
-                    child: const Icon(
-                      Icons.arrow_back_ios,
+                    child: const FaIcon(
+                      FontAwesomeIcons.chevronLeft,
                       color: Colors.grey,
                       size: 20,
                     ),
@@ -314,99 +359,65 @@ class _PackageManagerWidgetState extends State<PackageManagerWidget> {
                 padding: const EdgeInsets.only(right: 10),
                 child: ScrollConfiguration(
                   behavior: CustomScroll(),
-                  child: ListView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 25),
-                        child: SizedBox(
-                          height: 35,
-                          child: TextFormField(
-                            controller: _packageName,
-                            textAlign: TextAlign.start,
-                            keyboardType: TextInputType.text,
-                            textAlignVertical: TextAlignVertical.center,
-                            style: const TextStyle(
-                              color: Colors.black,
-                            ),
-                            decoration: InputDecoration(
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 15,
-                                vertical: 5,
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: const BorderSide(
-                                  width: 0.5,
-                                  color: Colors.grey,
-                                ),
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: const BorderSide(
-                                  width: 1,
-                                  color: Colors.grey,
-                                ),
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
                       const Padding(
                         padding: EdgeInsets.all(5),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      Column(
                         children: [
-                          TextButton(
-                            onPressed: () {},
-                            style: TextButton.styleFrom(
-                              padding: EdgeInsets.zero,
-                              foregroundColor: Colors.grey,
-                            ),
-                            child: Column(
-                              children: const [
-                                Icon(
-                                  Icons.file_open_outlined,
-                                  color: Colors.grey,
-                                  size: 50,
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.all(5),
-                                ),
-                                Text(
-                                  "arquivo.mp3",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              ],
+                          const Text(
+                            "Insira o código do pacote",
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 14,
                             ),
                           ),
-                          TextButton(
-                            onPressed: () {},
-                            style: TextButton.styleFrom(
-                              padding: EdgeInsets.zero,
-                              foregroundColor: Colors.grey,
-                            ),
-                            child: Column(
-                              children: const [
-                                Icon(
-                                  Icons.image_outlined,
-                                  color: Colors.grey,
-                                  size: 50,
+                          const Padding(
+                            padding: EdgeInsets.all(4),
+                          ),
+                          Form(
+                            key: _formKey,
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 25),
+                              child: TextFormField(
+                                controller: _packageCode,
+                                textAlign: TextAlign.start,
+                                keyboardType: TextInputType.text,
+                                textAlignVertical: TextAlignVertical.center,
+                                style: const TextStyle(
+                                  color: Colors.black,
                                 ),
-                                Padding(
-                                  padding: EdgeInsets.all(5),
-                                ),
-                                Text(
-                                  "arquivo.mp3",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: Colors.grey,
+                                decoration: InputDecoration(
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 15,
+                                    vertical: 5,
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: const BorderSide(
+                                      width: 0.5,
+                                      color: Colors.grey,
+                                    ),
+                                    borderRadius: BorderRadius.circular(25),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: const BorderSide(
+                                      width: 1,
+                                      color: Colors.grey,
+                                    ),
+                                    borderRadius: BorderRadius.circular(25),
                                   ),
                                 ),
-                              ],
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Digite um código';
+                                  }
+                                  return null;
+                                },
+                              ),
                             ),
                           ),
                         ],
@@ -417,7 +428,9 @@ class _PackageManagerWidgetState extends State<PackageManagerWidget> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 50),
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            _postWoodyversoArPacks();
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.black,
                             shape: const RoundedRectangleBorder(
@@ -426,161 +439,22 @@ class _PackageManagerWidgetState extends State<PackageManagerWidget> {
                               ),
                             ),
                           ),
-                          child: const Text(
-                            "Adicionar",
-                            style: TextStyle(fontSize: 16),
-                          ),
+                          child: !awaitRequest
+                              ? const Text(
+                                  "Adicionar",
+                                  style: TextStyle(fontSize: 16),
+                                )
+                              : const SizedBox(
+                                  width: 16,
+                                  height: 16,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                  ),
+                                ),
                         ),
                       ),
                     ],
                   ),
-                ),
-              ),
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget EditPackage() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        vertical: 15,
-        horizontal: 10,
-      ),
-      child: Column(
-        children: [
-          SizedBox(
-            width: double.infinity,
-            child: Stack(
-              alignment: AlignmentDirectional.topStart,
-              children: [
-                SizedBox(
-                  width: 25,
-                  height: 25,
-                  child: TextButton(
-                    onPressed: () {
-                      setState(() {
-                        option = 1;
-                      });
-                    },
-                    style: TextButton.styleFrom(
-                      padding: EdgeInsets.zero,
-                      foregroundColor: Colors.grey,
-                    ),
-                    child: const Icon(
-                      Icons.arrow_back_ios,
-                      color: Colors.grey,
-                      size: 20,
-                    ),
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Text(
-                      "Editar pacote",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontWeight: FontWeight.w400,
-                        fontSize: 20,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          const Padding(
-            padding: EdgeInsets.all(5),
-          ),
-          SizedBox(
-            height: 175,
-            width: 250,
-            child: Scrollbar(
-              thickness: 5,
-              radius: const Radius.circular(25),
-              child: ScrollConfiguration(
-                behavior: CustomScroll(),
-                child: ListView(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 25),
-                      child: SizedBox(
-                        height: 35,
-                        child: TextFormField(
-                          controller: _packageName,
-                          textAlign: TextAlign.start,
-                          keyboardType: TextInputType.text,
-                          textAlignVertical: TextAlignVertical.center,
-                          style: const TextStyle(
-                            color: Colors.black,
-                          ),
-                          decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 15,
-                              vertical: 5,
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                width: 0.5,
-                                color: Colors.grey,
-                              ),
-                              borderRadius: BorderRadius.circular(25),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                width: 1,
-                                color: Colors.grey,
-                              ),
-                              borderRadius: BorderRadius.circular(25),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.all(5),
-                    ),
-                    const Icon(
-                      Icons.file_open_outlined,
-                      color: Colors.grey,
-                      size: 50,
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.all(5),
-                    ),
-                    const Text(
-                      "arquivo.mp3",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.grey,
-                      ),
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.all(5),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 50),
-                      child: ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black,
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(25),
-                            ),
-                          ),
-                        ),
-                        child: const Text(
-                          "Editar",
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ),
-                    ),
-                  ],
                 ),
               ),
             ),
@@ -604,9 +478,6 @@ class _PackageManagerWidgetState extends State<PackageManagerWidget> {
         break;
       case 2:
         renderWidget = AddPackage();
-        break;
-      case 3:
-        renderWidget = EditPackage();
         break;
       default:
         renderWidget = SelectOption();

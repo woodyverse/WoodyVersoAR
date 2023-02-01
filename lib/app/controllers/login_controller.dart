@@ -40,7 +40,13 @@ class LoginController {
   Future<ResponseAPIService> postLogin(PostLoginModel postLoginModel) async {
     ResponseAPIService res = ResponseAPIService();
 
-    await API().post("login", false, postLoginModel.toJson()).then((value) {
+    await API()
+        .post(
+      "login",
+      false,
+      postLoginModel.toJson(),
+    )
+        .then((value) {
       res = ResponseAPIService(response: value.response);
     });
 
@@ -56,7 +62,13 @@ class LoginController {
   Future<ResponseAPIService> postToken(PostTokenModel postTokenModel) async {
     ResponseAPIService res = ResponseAPIService();
 
-    await API().post("token", false, postTokenModel.toJson()).then((value) {
+    await API()
+        .post(
+      "token",
+      false,
+      postTokenModel.toJson(),
+    )
+        .then((value) {
       res = ResponseAPIService(response: value.response);
     });
 
@@ -72,7 +84,11 @@ class LoginController {
     ResponseAPIService res = ResponseAPIService();
 
     await API()
-        .post("create-user", false, postCreateUserModel.toJson())
+        .post(
+      "create-user",
+      false,
+      postCreateUserModel.toJson(),
+    )
         .then((value) {
       res = ResponseAPIService(response: value.response);
     });
