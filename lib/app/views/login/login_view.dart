@@ -22,6 +22,8 @@ class _LoginViewState extends State<LoginView> {
 
   bool enableLogin = false;
   bool enableRegister = false;
+  bool enableForgotPassword = false;
+  bool enableEmailSent = false;
 
   bool awaitRequest = false;
 
@@ -323,6 +325,24 @@ class _LoginViewState extends State<LoginView> {
                           }
                           return null;
                         },
+                      ),
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                          foregroundColor: Colors.black,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            enableLogin = false;
+                            enableForgotPassword = true;
+                          });
+                        },
+                        child: const Text(
+                          "Esqueceu sua senha?",
+                          style: TextStyle(
+                            color: Colors.black,
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -697,6 +717,322 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 
+  Widget forgotPasswordWidget() {
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.80,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(5),
+          topRight: Radius.circular(20),
+          bottomRight: Radius.circular(20),
+          bottomLeft: Radius.circular(5),
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 30,
+          vertical: 25,
+        ),
+        child: Wrap(
+          children: [
+            Stack(
+              alignment: AlignmentDirectional.topStart,
+              children: [
+                SizedBox(
+                  width: 25,
+                  height: 25,
+                  child: TextButton(
+                    onPressed: () {
+                      setState(() {
+                        enableLogin = true;
+                        enableForgotPassword = false;
+                      });
+                    },
+                    style: TextButton.styleFrom(
+                      padding: EdgeInsets.zero,
+                      foregroundColor: Colors.grey,
+                    ),
+                    child: const FaIcon(
+                      FontAwesomeIcons.chevronLeft,
+                      color: Colors.grey,
+                      size: 15,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const Padding(
+              padding: EdgeInsets.all(20),
+            ),
+            Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  const Text(
+                    "Digite seu email",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 34,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const Text(
+                    "Iremos lhe ajudar a redefinir sua senha",
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 14,
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.all(15),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TextFormField(
+                        controller: _email,
+                        textAlign: TextAlign.start,
+                        keyboardType: TextInputType.emailAddress,
+                        textAlignVertical: TextAlignVertical.center,
+                        style: const TextStyle(
+                          color: Colors.grey,
+                        ),
+                        decoration: InputDecoration(
+                          hintText: "Email",
+                          hintStyle: const TextStyle(
+                            color: Colors.grey,
+                          ),
+                          filled: true,
+                          fillColor: const Color.fromARGB(255, 239, 239, 239),
+                          contentPadding: const EdgeInsets.all(5),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              width: 0.5,
+                              color: Colors.grey,
+                            ),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              width: 1,
+                              color: Colors.transparent,
+                            ),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                        ),
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Digite o email";
+                          }
+                          return null;
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.all(20),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: 175,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        enableForgotPassword = false;
+                        enableEmailSent = true;
+                      });
+                      // ? awaitRequest ? null : ;
+                    },
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.black,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(25),
+                        ),
+                      ),
+                    ),
+                    child: awaitRequest
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                              ),
+                            ),
+                          )
+                        : const Text(
+                            "Confirmar",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w300,
+                              color: Colors.white,
+                            ),
+                          ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget emailSendWidget() {
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.80,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(5),
+          topRight: Radius.circular(20),
+          bottomRight: Radius.circular(20),
+          bottomLeft: Radius.circular(5),
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 30,
+          vertical: 25,
+        ),
+        child: Wrap(
+          children: [
+            Stack(
+              alignment: AlignmentDirectional.topStart,
+              children: [
+                SizedBox(
+                  width: 25,
+                  height: 25,
+                  child: TextButton(
+                    onPressed: () {
+                      setState(() {
+                        enableLogin = true;
+                        enableEmailSent = false;
+                        _email.clear();
+                      });
+                    },
+                    style: TextButton.styleFrom(
+                      padding: EdgeInsets.zero,
+                      foregroundColor: Colors.grey,
+                    ),
+                    child: const FaIcon(
+                      FontAwesomeIcons.chevronLeft,
+                      color: Colors.grey,
+                      size: 15,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const Padding(
+              padding: EdgeInsets.all(20),
+            ),
+            Column(
+              children: [
+                const Text(
+                  "Email enviado!",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 34,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Text(
+                  "Verifique sua caixa de entrada",
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 14,
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.all(15),
+                ),
+                SizedBox(
+                  width: double.infinity,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: const [
+                      CircleAvatar(
+                        radius: 45,
+                        backgroundColor: Colors.black,
+                        child: CircleAvatar(
+                          radius: 40,
+                          backgroundColor: Colors.white,
+                          foregroundColor: Colors.black,
+                          child: FaIcon(
+                            FontAwesomeIcons.envelope,
+                            size: 50,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const Padding(
+              padding: EdgeInsets.all(20),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: 175,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        enableLogin = true;
+                        enableEmailSent = false;
+                        _email.clear();
+                      });
+                      // ? awaitRequest ? null : ;
+                    },
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.black,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(25),
+                        ),
+                      ),
+                    ),
+                    child: awaitRequest
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                              ),
+                            ),
+                          )
+                        : const Text(
+                            "Confirmar",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w300,
+                              color: Colors.white,
+                            ),
+                          ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   ///
   @override
   Widget build(BuildContext context) {
@@ -724,6 +1060,8 @@ class _LoginViewState extends State<LoginView> {
                       setState(() {
                         enableLogin = true;
                         enableRegister = false;
+                        enableForgotPassword = false;
+                        enableEmailSent = false;
                       });
                     },
                     style: ElevatedButton.styleFrom(
@@ -752,6 +1090,8 @@ class _LoginViewState extends State<LoginView> {
                       setState(() {
                         enableLogin = false;
                         enableRegister = true;
+                        enableForgotPassword = false;
+                        enableEmailSent = false;
                       });
                     },
                     style: OutlinedButton.styleFrom(
@@ -790,6 +1130,22 @@ class _LoginViewState extends State<LoginView> {
                 Visibility(
                   visible: enableRegister,
                   child: registerWidget(),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                Visibility(
+                  visible: enableForgotPassword,
+                  child: forgotPasswordWidget(),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                Visibility(
+                  visible: enableEmailSent,
+                  child: emailSendWidget(),
                 ),
               ],
             ),
